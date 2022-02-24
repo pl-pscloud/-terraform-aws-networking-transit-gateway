@@ -31,7 +31,10 @@ resource "aws_ec2_transit_gateway_vpc_attachment" "pscloud-tgw-attachment" {
 }
 
 resource "aws_ec2_transit_gateway_peering_attachment" "pscloud-tgw-peering-attachment" {
-  for_each                = var.pscloud_peer_attachments
+  for_each = {
+    for key, val in var.pscloud_peer_attachments : key => val
+    if val.name != ""
+  }
 
   peer_account_id         = each.value.peer_account_id
   peer_region             = each.value.peer_region
