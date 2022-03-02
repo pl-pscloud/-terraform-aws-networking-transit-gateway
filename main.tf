@@ -63,7 +63,7 @@ resource "aws_ec2_transit_gateway_route_table" "pscloud-tgw-route-tables" {
 resource "aws_ec2_transit_gateway_route_table_association" "pscloud-tgw-rt-association" {
   for_each            = var.pscloud_route_table_associations
 
-  transit_gateway_attachment_id  = each.value.attachment_type == "vpn" || (each.value.attachment_type == "vpc" && each.value.attachment_id != "") ? each.value.attachment_id : (each.value.attachment_type == "vpc" ? aws_ec2_transit_gateway_vpc_attachment.pscloud-tgw-attachment[each.value.attachment_name].id : aws_ec2_transit_gateway_peering_attachment.pscloud-tgw-peering-attachment[each.value.attachment_name].id)
+  transit_gateway_attachment_id  = each.value.attachment_type == "vpn" || (each.value.attachment_type == "vpc" && each.value.attachment_id != "") || (each.value.attachment_type == "peering" && each.value.attachment_id != "") ? each.value.attachment_id : (each.value.attachment_type == "vpc" ? aws_ec2_transit_gateway_vpc_attachment.pscloud-tgw-attachment[each.value.attachment_name].id : aws_ec2_transit_gateway_peering_attachment.pscloud-tgw-peering-attachment[each.value.attachment_name].id)
   transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.pscloud-tgw-route-tables[each.value.route_table_name].id 
 
   depends_on = [ aws_ec2_transit_gateway_vpc_attachment.pscloud-tgw-attachment, aws_ec2_transit_gateway_route_table.pscloud-tgw-route-tables ]
@@ -74,7 +74,7 @@ resource "aws_ec2_transit_gateway_route_table_propagation" "pscloud-tgw-rt-propa
   for_each            = var.pscloud_route_table_propagations
 
 
-  transit_gateway_attachment_id  = each.value.attachment_type == "vpn" || (each.value.attachment_type == "vpc" && each.value.attachment_id != "") ? each.value.attachment_id : (each.value.attachment_type == "vpc" ? aws_ec2_transit_gateway_vpc_attachment.pscloud-tgw-attachment[each.value.attachment_name].id : aws_ec2_transit_gateway_peering_attachment.pscloud-tgw-peering-attachment[each.value.attachment_name].id)
+  transit_gateway_attachment_id  = each.value.attachment_type == "vpn" || (each.value.attachment_type == "vpc" && each.value.attachment_id != "")  || (each.value.attachment_type == "peering" && each.value.attachment_id != "") ? each.value.attachment_id : (each.value.attachment_type == "vpc" ? aws_ec2_transit_gateway_vpc_attachment.pscloud-tgw-attachment[each.value.attachment_name].id : aws_ec2_transit_gateway_peering_attachment.pscloud-tgw-peering-attachment[each.value.attachment_name].id)
   transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.pscloud-tgw-route-tables[each.value.route_table_name].id 
 
   depends_on = [ aws_ec2_transit_gateway_vpc_attachment.pscloud-tgw-attachment, aws_ec2_transit_gateway_route_table.pscloud-tgw-route-tables ]
